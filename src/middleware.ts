@@ -5,8 +5,17 @@ import { createServerClient } from "@supabase/ssr";
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
+  // Rutas públicas que no requieren autenticación
+  const publicPaths = ["/", "/login"];
+  const isPublicPath = publicPaths.includes(req.nextUrl.pathname);
+
   // Permitir webhooks sin autenticación
   if (req.nextUrl.pathname.startsWith("/api/webhooks/")) {
+    return res;
+  }
+
+  // Permitir API routes de auth (login se maneja en server actions, pero por si acaso)
+  if (req.nextUrl.pathname.startsWith("/api/auth/")) {
     return res;
   }
 
@@ -27,26 +36,16 @@ export async function middleware(req: NextRequest) {
 
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
 
-  const isAuthRoute = req.nextUrl.pathname.startsWith("/(auth)") ||
-    req.nextUrl.pathname === "/login" ||
-    req.nextUrl.pathname === "/register";
-
-  const isDashboardRoute = req.nextUrl.pathname.startsWith("/(dashboard)") ||
-    (req.nextUrl.pathname !== "/login" &&
-      req.nextUrl.pathname !== "/register" &&
-      req.nextUrl.pathname !== "/");
-
-  // Si no está autenticado y quiere entrar al dashboard, redirigir a login
-  if (!user && !isAuthRoute && req.nextUrl.pathname !== "/") {
-    return NextResponse.redirect(new URL("/login", req.url));
+  // Si está autenticado y visita la landing o login, redirigir al dashboard
+  if (user && isPublicPath) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Si está autenticado y quiere entrar a auth, redirigir a dashboard
-  if (user && isAuthRoute) {
-    return NextResponse.redirect(new URL("/", req.url));
+  // Si no está autenticado y visita una ruta protegida, redirigir a login
+  if (!user && !isPublicPath) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return res;

@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { signOut } from "@/lib/actions/auth";
+import { Logo } from "@/components/landing/logo";
 import {
   LayoutDashboard,
   Users,
@@ -19,7 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/associates", label: "Associates", icon: Users },
   { href: "/transactions", label: "Transactions", icon: Receipt },
   { href: "/goals", label: "Goals", icon: Target },
@@ -37,10 +39,8 @@ export function Sidebar() {
     <aside className="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50">
       {/* Brand */}
       <div className="p-6">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold text-lg">
-            B
-          </div>
+        <Link href="/dashboard" className="flex items-center gap-3">
+          <Logo width={40} height={40} />
           <div>
             <h1 className="font-bold text-xl text-slate-900 dark:text-white tracking-tight">
               Brisa
@@ -88,13 +88,16 @@ export function Sidebar() {
           <Settings className="w-5 h-5" />
           Settings
         </Link>
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-3 px-4 py-3 h-auto rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-        >
-          <LogOut className="w-5 h-5" />
-          Logout
-        </Button>
+        <form action={signOut}>
+          <Button
+            type="submit"
+            variant="ghost"
+            className="w-full justify-start gap-3 px-4 py-3 h-auto rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+          </Button>
+        </form>
       </div>
     </aside>
   );
