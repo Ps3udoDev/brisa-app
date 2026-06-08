@@ -29,8 +29,8 @@ export default function GoalsPage() {
 
   const filters =
     statusFilter === "all"
-      ? { creatorId: me?.id }
-      : { creatorId: me?.id, status: statusFilter };
+      ? { userId: me?.id }
+      : { userId: me?.id, status: statusFilter };
 
   const { goals, isLoading } = useGoals(filters);
 

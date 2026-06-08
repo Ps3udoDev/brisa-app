@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Search, Bell, Plus, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,8 +11,13 @@ import {
 } from "@/components/ui/sheet";
 import { Sidebar } from "./sidebar";
 import { Menu } from "lucide-react";
+import { useUnreadNotificationCount } from "@/hooks/queries/use-notifications";
+import { useProfile } from "@/hooks/queries/use-profile";
 
 export function TopBar() {
+  const { profile: me } = useProfile();
+  const { count: unreadCount } = useUnreadNotificationCount(me?.id);
+
   return (
     <header className="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-40 flex items-center justify-between px-4 lg:px-8">
       {/* Mobile menu */}
@@ -43,10 +49,14 @@ export function TopBar() {
           Agregar transacción
         </Button>
 
-        <Button variant="ghost" size="icon" className="relative">
+        <Link href="/notifications" className="relative inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-        </Button>
+          {unreadCount > 0 && (
+            <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </Link>
 
         <Button variant="ghost" size="icon">
           <User className="w-5 h-5" />

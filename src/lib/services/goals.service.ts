@@ -7,18 +7,22 @@ export type GoalUpdate = Database["public"]["Tables"]["goals"]["Update"];
 export type GoalProgress = Database["public"]["Views"]["goal_progress"]["Row"];
 
 export const goalService = {
-  async list(filters?: { assignedTo?: string; creatorId?: string; status?: string }) {
+  async list(filters?: { assignedTo?: string; creatorId?: string; userId?: string; status?: string }) {
     const client = getClient();
     let query = client
       .from("goals")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (filters?.assignedTo) {
-      query = query.eq("assigned_to", filters.assignedTo);
-    }
-    if (filters?.creatorId) {
-      query = query.eq("creator_id", filters.creatorId);
+    if (filters?.userId) {
+      query = query.or(`creator_id.eq.${filters.userId},assigned_to.eq.${filters.userId}`);
+    } else {
+      if (filters?.assignedTo) {
+        query = query.eq("assigned_to", filters.assignedTo);
+      }
+      if (filters?.creatorId) {
+        query = query.eq("creator_id", filters.creatorId);
+      }
     }
     if (filters?.status) {
       query = query.eq("status", filters.status);

@@ -5,7 +5,7 @@ import { goalService } from "@/lib/services/goals.service";
 import { KEYS } from "@/lib/swr/keys";
 import type { Goal } from "@/types/domain";
 
-export function useGoals(filters?: { assignedTo?: string; creatorId?: string; status?: string }) {
+export function useGoals(filters?: { assignedTo?: string; creatorId?: string; userId?: string; status?: string }) {
   const key = KEYS.goals.list(filters ?? {});
 
   const { data, error, isLoading } = useSWR(

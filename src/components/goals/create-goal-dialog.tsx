@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Plus } from "lucide-react";
 import { useProfile } from "@/hooks/queries/use-profile";
 import { useCreateGoal } from "@/hooks/mutations/use-goals";
+import { AssociateSearchInput } from "@/components/ui/associate-search";
 
 interface CreateGoalDialogProps {
   onSuccess?: () => void;
@@ -30,7 +31,7 @@ export function CreateGoalDialog({ onSuccess }: CreateGoalDialogProps) {
     name: "",
     target_amount: "",
     deadline: "",
-    assigned_to: "",
+    assigned_to: null as string | null,
   });
   const [error, setError] = useState("");
 
@@ -55,11 +56,11 @@ export function CreateGoalDialog({ onSuccess }: CreateGoalDialogProps) {
         target_amount: target,
         deadline: form.deadline || undefined,
         creator_id: profile.id,
-        assigned_to: form.assigned_to || profile.id,
+        assigned_to: form.assigned_to ?? profile.id,
         status: "active",
       });
 
-      setForm({ name: "", target_amount: "", deadline: "", assigned_to: "" });
+      setForm({ name: "", target_amount: "", deadline: "", assigned_to: null });
       setOpen(false);
       onSuccess?.();
     } catch (err: any) {
@@ -129,13 +130,15 @@ export function CreateGoalDialog({ onSuccess }: CreateGoalDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="goal-assigned">Asignar a (opcional)</Label>
-            <Input
-              id="goal-assigned"
-              placeholder="ID del asociado (por defecto: tú)"
+            <Label>Asignar a</Label>
+            <AssociateSearchInput
               value={form.assigned_to}
-              onChange={(e) => setForm((f) => ({ ...f, assigned_to: e.target.value }))}
+              onChange={(id) => setForm((f) => ({ ...f, assigned_to: id }))}
+              placeholder="Buscar asociado por nombre..."
             />
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Si no seleccionas nadie, la meta se asignará a ti.
+            </p>
           </div>
 
           <Button

@@ -89,6 +89,14 @@ export const KEYS = {
       ["brisa", "permissions", "check", userId, perm] as const,
   },
 
+  // ── Notifications ──
+  notifications: {
+    list: (userId: string) =>
+      ["brisa", "notifications", "list", userId] as const,
+    unreadCount: (userId: string) =>
+      ["brisa", "notifications", "unreadCount", userId] as const,
+  },
+
   // ── Vistas SQL ──
   views: {
     monthlyExpenses: (userId?: string) =>
