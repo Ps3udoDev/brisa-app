@@ -19,6 +19,7 @@ export function useUserBalance(userId?: string) {
     },
     {
       revalidateOnFocus: false,
+      keepPreviousData: true,
     }
   );
 

@@ -18,6 +18,7 @@ export function useProfile(userId?: string) {
     },
     {
       revalidateOnFocus: false,
+      keepPreviousData: true,
     }
   );
 

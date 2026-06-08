@@ -13,6 +13,7 @@ export function useAssociates(parentId?: string) {
     () => profileService.list({ parentId: parentId ?? undefined }),
     {
       revalidateOnFocus: false,
+      keepPreviousData: true,
     }
   );
 
@@ -32,6 +33,7 @@ export function useSubordinateProfiles(parentId?: string) {
     () => (parentId ? profileService.getSubordinateProfiles(parentId) : []),
     {
       revalidateOnFocus: false,
+      keepPreviousData: true,
     }
   );
 

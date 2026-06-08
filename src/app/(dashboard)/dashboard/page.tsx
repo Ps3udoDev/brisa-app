@@ -63,9 +63,12 @@ export default function DashboardPage() {
     )
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
-  const isLoading = profileLoading || transactionsLoading || balanceLoading;
+  const isInitialLoading =
+    profileLoading && !profile &&
+    transactionsLoading && transactions.length === 0 &&
+    balanceLoading && !balance;
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <div className="flex items-center justify-center h-96">
         <Loader2 className="h-10 w-10 animate-spin text-orange-500" />

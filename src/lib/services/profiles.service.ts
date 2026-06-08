@@ -8,23 +8,56 @@ export type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
 export const profileService = {
   async getMe() {
     const client = getClient();
+
+    // 1. Obtenemos el usuario autenticado
+    const { data: { user }, error: authError } = await client.auth.getUser();
+    if (authError || !user) {
+      throw new Error("No se pudo obtener el usuario autenticado");
+    }
+
+    // 2. Traemos el perfil filtrando por ID
     const { data, error } = await client
       .from("profiles")
-      .select("*, user_balances(*)")
+      .select("*")
+      .eq("id", user.id)
       .single();
     handleError(error);
-    return data as Profile & { user_balances: { balance: number } | null };
+
+    // Si por alguna razón extrema la data es nula, lanzamos un error preventivo para TypeScript
+    if (!data) {
+      throw new Error("Perfil no encontrado");
+    }
+
+    // 3. Consultamos el balance usando data.id con total seguridad
+    const { data: balance } = await client
+      .from("user_balances")
+      .select("balance")
+      .eq("user_id", data.id) // 🔥 Aquí TypeScript ya sabe que data NO es null
+      .maybeSingle();
+
+    return { ...data, user_balances: balance } as Profile & {
+      user_balances: { balance: number } | null;
+    };
   },
 
   async getById(id: string) {
     const client = getClient();
     const { data, error } = await client
       .from("profiles")
-      .select("*, user_balances(*)")
+      .select("*")
       .eq("id", id)
       .single();
     handleError(error);
-    return data as Profile & { user_balances: { balance: number } | null };
+
+    const { data: balance } = await client
+      .from("user_balances")
+      .select("balance")
+      .eq("user_id", id)
+      .maybeSingle();
+
+    return { ...data, user_balances: balance } as Profile & {
+      user_balances: { balance: number } | null;
+    };
   },
 
   async list(filters?: { role?: string; parentId?: string | null }) {

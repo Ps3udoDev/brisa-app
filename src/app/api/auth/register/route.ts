@@ -12,7 +12,7 @@ const registerSchema = z.object({
   last_name1: z.string().max(100).optional(),
   last_name2: z.string().max(100).optional(),
   role: z.enum(["asociado", "jefe_operador"]).default("asociado"),
-  parent_id: z.uuid().optional(),
+  parent_id: z.uuid().optional().nullable(),
 });
 
 export const POST = withAuth(
@@ -39,8 +39,11 @@ export const POST = withAuth(
       last_name1,
       last_name2,
       role,
-      parent_id,
+      parent_id: bodyParentId,
     } = parsed.data;
+
+    // Si no viene parent_id, el creador se convierte en superior automáticamente
+    const parent_id = bodyParentId ?? user.id;
 
     try {
       // Paso 1: Crear usuario en auth.users con SERVICE ROLE
@@ -62,7 +65,7 @@ export const POST = withAuth(
         .from("profiles")
         .update({
           role,
-          parent_id: parent_id || null,
+          parent_id: parent_id,
           first_name,
           middle_name,
           last_name1,
@@ -92,5 +95,5 @@ export const POST = withAuth(
       );
     }
   },
-  { requireRole: ["super_admin"] } // Solo Super Admin puede registrar
+  { requireRole: ["super_admin", "jefe_operador"] } // Super Admin y Jefe Operador pueden registrar
 );

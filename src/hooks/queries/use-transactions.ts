@@ -13,6 +13,7 @@ export function useTransactions(filters?: TransactionFilters) {
     () => transactionService.list(filters),
     {
       revalidateOnFocus: false,
+      keepPreviousData: true,
     }
   );
 
@@ -34,6 +35,7 @@ export function useTransactionSummary(userId: string, period?: string) {
     () => transactionService.getSummary(userId, period),
     {
       revalidateOnFocus: false,
+      keepPreviousData: true,
     }
   );
 

@@ -2,17 +2,15 @@
 
 import { Loader2, Shield, UserPlus, Users, Wallet } from "lucide-react";
 import { m } from "motion/react";
-import Link from "next/link";
 import { useState } from "react";
 import { AssociateCard } from "@/components/associates/associate-card";
+import { RegisterAssociateDialog } from "@/components/associates/register-associate-dialog";
 import { StatCard } from "@/components/data-display/stat-card";
-import { Button } from "@/components/ui/button";
 import {
   useAssociates,
   useSubordinateProfiles,
 } from "@/hooks/queries/use-associates";
 import { useProfile } from "@/hooks/queries/use-profile";
-import { useAuth } from "@/hooks/use-auth";
 
 const currencyFormatter = new Intl.NumberFormat("es-ES", {
   style: "currency",
@@ -31,7 +29,6 @@ const roleFilters: { value: string; label: string }[] = [
 
 export default function AssociatesPage() {
   const { profile: me } = useProfile();
-  const { isSuperAdmin, isJefeOperador } = useAuth();
   const { associates, isLoading: directLoading } = useAssociates(me?.id);
   const { profiles: allProfiles, isLoading: allLoading } =
     useSubordinateProfiles(me?.id);
@@ -39,7 +36,8 @@ export default function AssociatesPage() {
   const [roleFilter, setRoleFilter] = useState("all");
   const [viewMode, setViewMode] = useState<"direct" | "all">("direct");
 
-  const canRegister = isSuperAdmin() || isJefeOperador();
+  const canRegister =
+    me?.role === "super_admin" || me?.role === "jefe_operador";
 
   const profiles = viewMode === "direct" ? associates : allProfiles;
   const isLoading = viewMode === "direct" ? directLoading : allLoading;
@@ -75,14 +73,7 @@ export default function AssociatesPage() {
           </p>
         </div>
 
-        {canRegister && (
-          <Link href="/register">
-            <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-              <UserPlus className="w-4 h-4 mr-2" />
-              Registrar asociado
-            </Button>
-          </Link>
-        )}
+        <RegisterAssociateDialog />
       </m.div>
 
       {/* Stats */}
@@ -159,7 +150,7 @@ export default function AssociatesPage() {
       </div>
 
       {/* List */}
-      {isLoading ? (
+      {isLoading && profiles.length === 0 ? (
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-10 w-10 animate-spin text-orange-500" />
         </div>
@@ -173,17 +164,9 @@ export default function AssociatesPage() {
           <p className="text-slate-500 dark:text-slate-400">
             No tienes asociados en esta categoría
           </p>
-          {canRegister && (
-            <Link href="/register">
-              <Button
-                variant="outline"
-                className="mt-4 border-orange-300 text-orange-600 hover:bg-orange-50"
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Registrar un asociado
-              </Button>
-            </Link>
-          )}
+          <div className="mt-4">
+            <RegisterAssociateDialog />
+          </div>
         </m.div>
       ) : (
         <div className="space-y-3">

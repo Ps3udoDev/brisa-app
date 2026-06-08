@@ -12,6 +12,7 @@ export function useMonthlyExpenses(userId?: string) {
     () => viewsService.getMonthlyExpenses(userId),
     {
       revalidateOnFocus: false,
+      keepPreviousData: true,
     }
   );
 
@@ -35,6 +36,7 @@ export function useGoalProgress(goalId?: string) {
     () => viewsService.getGoalProgress(goalId),
     {
       revalidateOnFocus: false,
+      keepPreviousData: true,
     }
   );
 
