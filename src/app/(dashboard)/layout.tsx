@@ -1,5 +1,6 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopBar } from "@/components/layout/top-bar";
+import { BrisaFloat } from "@/components/layout/brisa-float";
 import { AuthHydrator } from "@/components/layout/auth-hydrator";
 import { AnimationProvider } from "@/components/providers/animation-provider";
 import { SWRProvider } from "@/lib/swr/provider";
@@ -19,6 +20,7 @@ export default function DashboardLayout({
               <TopBar />
               <main className="flex-1 p-4 lg:p-8">{children}</main>
             </div>
+            <BrisaFloat />
           </div>
         </AnimationProvider>
       </AuthHydrator>

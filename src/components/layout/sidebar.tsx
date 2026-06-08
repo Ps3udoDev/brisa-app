@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { signOut } from "@/lib/actions/auth";
 import { Logo } from "@/components/landing/logo";
 import { useUnreadNotificationCount } from "@/hooks/queries/use-notifications";
 import { useProfile } from "@/hooks/queries/use-profile";
+import { BrisaBubble } from "./brisa-bubble";
+
 import {
   LayoutDashboard,
   Users,
@@ -17,10 +18,7 @@ import {
   BarChart3,
   Calculator,
   Bell,
-  Settings,
-  LogOut,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/dashboard", label: "Panel", icon: LayoutDashboard },
@@ -34,13 +32,13 @@ const navItems = [
   { href: "/notifications", label: "Notificaciones", icon: Bell },
 ];
 
-export function Sidebar() {
+export function SidebarNav() {
   const pathname = usePathname();
   const { profile: me } = useProfile();
   const { count: unreadCount } = useUnreadNotificationCount(me?.id);
 
   return (
-    <aside className="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50">
+    <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="p-6">
         <Link href="/dashboard" className="flex items-center gap-3">
@@ -85,31 +83,25 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Bottom actions */}
-      <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
-        <Link
-          href="/settings"
-          className={cn(
-            "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors",
-            pathname === "/settings"
-              ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300"
-              : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-          )}
-        >
-          <Settings className="w-5 h-5" />
-          Configuración
-        </Link>
-        <form action={signOut}>
-          <Button
-            type="submit"
-            variant="ghost"
-            className="w-full justify-start gap-3 px-4 py-3 h-auto rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-          >
-            <LogOut className="w-5 h-5" />
-            Cerrar sesión
-          </Button>
-        </form>
+      {/* Brisa mascot */}
+      <div className="p-4 flex flex-col items-center border-t border-slate-200 dark:border-slate-800">
+        <BrisaBubble position="top">
+          <img
+            src="/brisa-sitting.gif"
+            alt="Brisa"
+            className="w-24 h-auto object-contain cursor-pointer hover:scale-105 transition-transform"
+          />
+        </BrisaBubble>
+        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Brisa</p>
       </div>
+    </div>
+  );
+}
+
+export function Sidebar() {
+  return (
+    <aside className="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50">
+      <SidebarNav />
     </aside>
   );
 }
