@@ -45,7 +45,12 @@ export const profileService = {
 
     const { data, error, count } = await query;
     handleError(error);
-    return { data: (data as Profile[]) ?? [], count };
+    return {
+      data:
+        (data as (Profile & { user_balances?: { balance: number } | null })[]) ??
+        [],
+      count,
+    };
   },
 
   async getSubordinates(parentId: string) {
@@ -55,6 +60,26 @@ export const profileService = {
     });
     handleError(error);
     return (data as string[]) ?? [];
+  },
+
+  async getSubordinateProfiles(parentId: string) {
+    const client = getClient();
+    const { data, error } = await client.rpc("get_all_subordinates", {
+      parent_id: parentId,
+    });
+    handleError(error);
+    const ids = (data as string[]) ?? [];
+    if (ids.length === 0) return [];
+
+    const { data: profiles, error: profilesError } = await client
+      .from("profiles")
+      .select("*, user_balances(balance)")
+      .in("id", ids)
+      .order("role", { ascending: false })
+      .order("first_name", { ascending: true });
+
+    handleError(profilesError);
+    return (profiles as (Profile & { user_balances?: { balance: number } | null })[]) ?? [];
   },
 
   async update(id: string, updates: ProfileUpdate) {
