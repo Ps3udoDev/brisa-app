@@ -1,11 +1,15 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import useSWR from "swr";
 import { notificationService } from "@/lib/services/notifications.service";
 import type { Notification } from "@/lib/services/notifications.service";
 import { getClient } from "@/lib/services/_base";
 import { KEYS } from "@/lib/swr/keys";
+
+function createChannelName(base: string, userId: string) {
+  return `${base}:${userId}:${crypto.randomUUID()}`;
+}
 
 export function useNotifications(userId?: string) {
   const key = userId ? KEYS.notifications.list(userId) : null;
@@ -24,36 +28,43 @@ export function useNotifications(userId?: string) {
     if (!userId) return;
 
     const client = getClient();
-    const channel = client
-      .channel(`notifications:${userId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        () => {
-          mutate();
-        }
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        () => {
-          mutate();
-        }
-      )
-      .subscribe();
+    const channelName = createChannelName("notifications-list", userId);
+    const channel = client.channel(channelName);
+
+    channel.on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "notifications",
+        filter: `user_id=eq.${userId}`,
+      },
+      () => {
+        mutate();
+      }
+    );
+
+    channel.on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "notifications",
+        filter: `user_id=eq.${userId}`,
+      },
+      () => {
+        mutate();
+      }
+    );
+
+    channel.subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        console.log("[Realtime] notifications-list conectado");
+      }
+    });
 
     return () => {
-      channel.unsubscribe();
+      client.removeChannel(channel);
     };
   }, [userId, mutate]);
 
@@ -100,32 +111,39 @@ export function useUnreadNotificationCount(userId?: string) {
     if (!userId) return;
 
     const client = getClient();
-    const channel = client
-      .channel(`notifications-count:${userId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        () => mutate()
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${userId}`,
-        },
-        () => mutate()
-      )
-      .subscribe();
+    const channelName = createChannelName("notifications-count", userId);
+    const channel = client.channel(channelName);
+
+    channel.on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "notifications",
+        filter: `user_id=eq.${userId}`,
+      },
+      () => mutate()
+    );
+
+    channel.on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "notifications",
+        filter: `user_id=eq.${userId}`,
+      },
+      () => mutate()
+    );
+
+    channel.subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        console.log("[Realtime] notifications-count conectado");
+      }
+    });
 
     return () => {
-      channel.unsubscribe();
+      client.removeChannel(channel);
     };
   }, [userId, mutate]);
 
