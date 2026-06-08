@@ -1,22 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { Loader2, Shield, UserPlus, Users, Wallet } from "lucide-react";
+import { m } from "motion/react";
 import Link from "next/link";
-import { motion } from "motion/react";
-import { useAuth } from "@/hooks/use-auth";
-import { useProfile } from "@/hooks/queries/use-profile";
-import { useAssociates, useSubordinateProfiles } from "@/hooks/queries/use-associates";
+import { useState } from "react";
 import { AssociateCard } from "@/components/associates/associate-card";
 import { StatCard } from "@/components/data-display/stat-card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Users, UserPlus, Wallet, Shield } from "lucide-react";
-import type { Profile } from "@/types/domain";
+import {
+  useAssociates,
+  useSubordinateProfiles,
+} from "@/hooks/queries/use-associates";
+import { useProfile } from "@/hooks/queries/use-profile";
+import { useAuth } from "@/hooks/use-auth";
+
+const currencyFormatter = new Intl.NumberFormat("es-ES", {
+  style: "currency",
+  currency: "USD",
+});
 
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
+  return currencyFormatter.format(value);
 }
 
 const roleFilters: { value: string; label: string }[] = [
@@ -29,9 +33,8 @@ export default function AssociatesPage() {
   const { profile: me } = useProfile();
   const { isSuperAdmin, isJefeOperador } = useAuth();
   const { associates, isLoading: directLoading } = useAssociates(me?.id);
-  const { profiles: allProfiles, isLoading: allLoading } = useSubordinateProfiles(
-    me?.id
-  );
+  const { profiles: allProfiles, isLoading: allLoading } =
+    useSubordinateProfiles(me?.id);
 
   const [roleFilter, setRoleFilter] = useState("all");
   const [viewMode, setViewMode] = useState<"direct" | "all">("direct");
@@ -48,7 +51,7 @@ export default function AssociatesPage() {
 
   const totalBalance = filteredProfiles.reduce(
     (sum, p) => sum + (p.user_balances?.balance ?? 0),
-    0
+    0,
   );
 
   const jefeCount = profiles.filter((p) => p.role === "jefe_operador").length;
@@ -57,7 +60,7 @@ export default function AssociatesPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -80,7 +83,7 @@ export default function AssociatesPage() {
             </Button>
           </Link>
         )}
-      </motion.div>
+      </m.div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -114,6 +117,7 @@ export default function AssociatesPage() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
           <button
+            type="button"
             onClick={() => setViewMode("direct")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               viewMode === "direct"
@@ -124,6 +128,7 @@ export default function AssociatesPage() {
             Directos
           </button>
           <button
+            type="button"
             onClick={() => setViewMode("all")}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               viewMode === "all"
@@ -138,6 +143,7 @@ export default function AssociatesPage() {
         <div className="flex items-center gap-2">
           {roleFilters.map((filter) => (
             <button
+              type="button"
               key={filter.value}
               onClick={() => setRoleFilter(filter.value)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
@@ -158,7 +164,7 @@ export default function AssociatesPage() {
           <Loader2 className="h-10 w-10 animate-spin text-orange-500" />
         </div>
       ) : filteredProfiles.length === 0 ? (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center py-16"
@@ -178,7 +184,7 @@ export default function AssociatesPage() {
               </Button>
             </Link>
           )}
-        </motion.div>
+        </m.div>
       ) : (
         <div className="space-y-3">
           {filteredProfiles.map((profile, i) => (

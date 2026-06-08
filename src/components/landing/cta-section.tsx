@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ArrowRight } from "lucide-react";
 
 export function CTASection() {
@@ -12,7 +12,7 @@ export function CTASection() {
         <div className="absolute bottom-0 right-1/4 w-56 h-56 rounded-full bg-[#F3C1B6]/15 blur-2xl" />
       </div>
 
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -29,7 +29,7 @@ export function CTASection() {
           propósito.
         </p>
 
-        <motion.div
+        <m.div
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           className="inline-block"
@@ -41,7 +41,7 @@ export function CTASection() {
             Comienza ahora
             <ArrowRight className="w-5 h-5" />
           </Link>
-        </motion.div>
+        </m.div>
 
         <p className="mt-6 text-sm text-[#8A9597]">
           ¿Ya tienes cuenta?{" "}
@@ -52,7 +52,7 @@ export function CTASection() {
             Inicia sesión
           </Link>
         </p>
-      </motion.div>
+      </m.div>
     </section>
   );
 }

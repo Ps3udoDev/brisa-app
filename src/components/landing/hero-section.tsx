@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ArrowRight, ChevronDown } from "lucide-react";
 
 export function HeroSection() {
@@ -9,22 +9,22 @@ export function HeroSection() {
     <section className="relative pt-16 pb-24 px-4 sm:px-6 overflow-hidden">
       {/* Floating shapes */}
       <div className="absolute inset-0 pointer-events-none">
-        <motion.div
+        <m.div
           animate={{ y: [-20, 20, -20], rotate: [0, 5, 0] }}
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-20 right-10 w-64 h-64 rounded-full bg-[#E2875C]/10 blur-3xl"
         />
-        <motion.div
+        <m.div
           animate={{ y: [-30, 30, -30], x: [0, 10, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-40 left-10 w-48 h-48 rounded-full bg-[#F3C1B6]/20 blur-2xl"
         />
-        <motion.div
+        <m.div
           animate={{ y: [-15, 15, -15] }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           className="absolute bottom-20 right-1/4 w-32 h-32 rounded-full bg-[#709A73]/10 blur-2xl"
         />
-        <motion.svg
+        <m.svg
           animate={{ y: [-15, 15, -15] }}
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           className="absolute top-16 right-8 w-24 h-24 text-[#E2875C]/20"
@@ -32,8 +32,8 @@ export function HeroSection() {
           fill="currentColor"
         >
           <circle cx="50" cy="50" r="40" />
-        </motion.svg>
-        <motion.svg
+        </m.svg>
+        <m.svg
           animate={{ y: [-20, 20, -20] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           className="absolute bottom-32 left-12 w-16 h-16 text-[#F3C1B6]/30"
@@ -41,11 +41,11 @@ export function HeroSection() {
           fill="currentColor"
         >
           <ellipse cx="50" cy="50" rx="45" ry="35" />
-        </motion.svg>
+        </m.svg>
       </div>
 
       <div className="relative max-w-3xl mx-auto text-center">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -53,9 +53,9 @@ export function HeroSection() {
         >
           <span className="w-2 h-2 bg-[#709A73] rounded-full" />
           <span className="text-sm text-[#8A9597]">Gestión financiera jerárquica</span>
-        </motion.div>
+        </m.div>
 
-        <motion.h1
+        <m.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -64,9 +64,9 @@ export function HeroSection() {
           Gestion patrimonial con,
           <br />
           <span className="text-[#E2875C]">calidez felina</span>
-        </motion.h1>
+        </m.h1>
 
-        <motion.p
+        <m.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -75,9 +75,9 @@ export function HeroSection() {
           Controla el flujo de caja global, asigna presupuestos a tu equipo,
           rastrea metas colectivas y gestiona solicitudes en tiempo real —
           todo con la tranquilidad que mereces.
-        </motion.p>
+        </m.p>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
@@ -97,7 +97,7 @@ export function HeroSection() {
             Descubre cómo funciona
             <ChevronDown className="w-4 h-4" />
           </a>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

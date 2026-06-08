@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Logo } from "./logo";
 
 export function Navbar() {
   return (
-    <motion.nav
+    <m.nav
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -26,6 +26,6 @@ export function Navbar() {
           Iniciar sesión
         </Link>
       </div>
-    </motion.nav>
+    </m.nav>
   );
 }

@@ -1,9 +1,9 @@
 "use client";
 
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { m } from "motion/react";
 import { useState } from "react";
-import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronRight, User } from "lucide-react";
 import type { Profile } from "@/types/domain";
 
 interface TreeNodeProps {
@@ -12,12 +12,14 @@ interface TreeNodeProps {
   children: React.ReactNode;
 }
 
+const currencyFormatter = new Intl.NumberFormat("es-ES", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 0,
+});
+
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(value);
+  return currencyFormatter.format(value);
 }
 
 function TreeNode({ profile, level, children }: TreeNodeProps) {
@@ -38,7 +40,7 @@ function TreeNode({ profile, level, children }: TreeNodeProps) {
 
   return (
     <div>
-      <motion.div
+      <m.div
         className="flex items-center gap-2 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg px-2 transition-colors cursor-pointer"
         style={{ paddingLeft: `${level * 20 + 8}px` }}
         onClick={() => hasChildren && setExpanded(!expanded)}
@@ -71,21 +73,21 @@ function TreeNode({ profile, level, children }: TreeNodeProps) {
             "text-sm font-semibold shrink-0",
             balance >= 0
               ? "text-slate-900 dark:text-white"
-              : "text-red-600 dark:text-red-400"
+              : "text-red-600 dark:text-red-400",
           )}
         >
           {formatCurrency(balance)}
         </p>
-      </motion.div>
+      </m.div>
 
       {expanded && children && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           transition={{ duration: 0.2 }}
         >
           {children}
-        </motion.div>
+        </m.div>
       )}
     </div>
   );
@@ -97,11 +99,12 @@ interface AssociateTreeProps {
 }
 
 export function AssociateTree({ profiles, rootId }: AssociateTreeProps) {
-  const buildTree = (parentId: string | null, level: number): React.ReactNode => {
+  const buildTree = (
+    parentId: string | null,
+    level: number,
+  ): React.ReactNode => {
     const children = profiles.filter((p) =>
-      parentId === null
-        ? p.parent_id === null
-        : p.parent_id === parentId
+      parentId === null ? p.parent_id === null : p.parent_id === parentId,
     );
 
     if (children.length === 0) return null;

@@ -1,33 +1,32 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import {
+  ArrowDownRight,
+  ArrowLeft,
+  ArrowUpRight,
+  Loader2,
+  Receipt,
+  Wallet,
+} from "lucide-react";
+import { m } from "motion/react";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { useParams } from "next/navigation";
+import { AssociateCard } from "@/components/associates/associate-card";
+import { StatCard } from "@/components/data-display/stat-card";
+import { Button } from "@/components/ui/button";
+import { useAssociates } from "@/hooks/queries/use-associates";
 import { useProfile } from "@/hooks/queries/use-profile";
 import { useTransactions } from "@/hooks/queries/use-transactions";
-import { useAssociates } from "@/hooks/queries/use-associates";
 import { useUserBalance } from "@/hooks/queries/use-user-balances";
-import { StatCard } from "@/components/data-display/stat-card";
-import { AssociateCard } from "@/components/associates/associate-card";
-import { Button } from "@/components/ui/button";
-import {
-  Loader2,
-  ArrowLeft,
-  Mail,
-  Shield,
-  Users,
-  Wallet,
-  ArrowUpRight,
-  ArrowDownRight,
-  Receipt,
-} from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const currencyFormatter = new Intl.NumberFormat("es-ES", {
+  style: "currency",
+  currency: "USD",
+});
+
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
+  return currencyFormatter.format(value);
 }
 
 const roleLabels: Record<string, string> = {
@@ -41,8 +40,7 @@ const roleBadgeClass: Record<string, string> = {
     "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
   jefe_operador:
     "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-  asociado:
-    "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+  asociado: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
 };
 
 export default function AssociateDetailPage() {
@@ -51,15 +49,18 @@ export default function AssociateDetailPage() {
 
   const { profile, isLoading: profileLoading } = useProfile(associateId);
   const { balance, isLoading: balanceLoading } = useUserBalance(associateId);
-  const {
-    transactions,
-    isLoading: transactionsLoading,
-  } = useTransactions({ userId: associateId, limit: 5 });
+  const { transactions, isLoading: transactionsLoading } = useTransactions({
+    userId: associateId,
+    limit: 5,
+  });
   const { associates: subordinates, isLoading: subordinatesLoading } =
     useAssociates(associateId);
 
   const isLoading =
-    profileLoading || balanceLoading || transactionsLoading || subordinatesLoading;
+    profileLoading ||
+    balanceLoading ||
+    transactionsLoading ||
+    subordinatesLoading;
 
   if (isLoading) {
     return (
@@ -95,8 +96,7 @@ export default function AssociateDetailPage() {
   const monthlyIncome = transactions
     .filter(
       (t) =>
-        t.type === "income" ||
-        (t.type === "budget_assignment" && t.amount > 0)
+        t.type === "income" || (t.type === "budget_assignment" && t.amount > 0),
     )
     .reduce((sum, t) => sum + t.amount, 0);
 
@@ -104,14 +104,14 @@ export default function AssociateDetailPage() {
     .filter(
       (t) =>
         t.type === "expense" ||
-        (t.type === "budget_assignment" && t.amount < 0)
+        (t.type === "budget_assignment" && t.amount < 0),
     )
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   return (
     <div className="space-y-8">
       {/* Back + Header */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -136,7 +136,7 @@ export default function AssociateDetailPage() {
               <span
                 className={cn(
                   "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium",
-                  roleBadgeClass[role] ?? roleBadgeClass.asociado
+                  roleBadgeClass[role] ?? roleBadgeClass.asociado,
                 )}
               >
                 {roleLabels[role] ?? "Asociado"}
@@ -149,7 +149,7 @@ export default function AssociateDetailPage() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -182,7 +182,7 @@ export default function AssociateDetailPage() {
       {/* Two columns: transactions + subordinates */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent transactions */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
@@ -199,7 +199,7 @@ export default function AssociateDetailPage() {
           ) : (
             <div className="space-y-3">
               {transactions.map((t, i) => (
-                <motion.div
+                <m.div
                   key={t.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -222,9 +222,7 @@ export default function AssociateDetailPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-slate-900 dark:text-white capitalize">
-                        {t.type === "budget_assignment"
-                          ? "Asignación"
-                          : t.type}
+                        {t.type === "budget_assignment" ? "Asignación" : t.type}
                       </p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         {t.description || "Sin descripción"}
@@ -241,14 +239,14 @@ export default function AssociateDetailPage() {
                     {t.amount > 0 ? "+" : ""}
                     {formatCurrency(t.amount)}
                   </p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
           )}
-        </motion.div>
+        </m.div>
 
         {/* Subordinates */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -274,7 +272,7 @@ export default function AssociateDetailPage() {
               ))}
             </div>
           )}
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

@@ -2,19 +2,19 @@ import { z } from "zod";
 
 // ── Auth ──
 export const loginSchema = z.object({
-  email: z.string().email("Correo inválido"),
+  email: z.email("Correo inválido"),
   password: z.string().min(8, "Mínimo 8 caracteres").max(128),
 });
 
 export const registerUserSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8).max(128),
   first_name: z.string().min(1).max(100).optional(),
   middle_name: z.string().max(100).optional(),
   last_name1: z.string().max(100).optional(),
   last_name2: z.string().max(100).optional(),
   role: z.enum(["asociado", "jefe_operador"]).default("asociado"),
-  parent_id: z.string().uuid().optional(),
+  parent_id: z.uuid().optional(),
 });
 
 // ── Transactions ──
@@ -33,13 +33,13 @@ export const transactionSchema = z.object({
   recurring_freq: z.enum(["daily", "weekly", "biweekly", "monthly", "yearly"]).optional(),
   is_priority: z.boolean().default(true),
   status: z.enum(["completed", "pending"]).default("completed"),
-  user_id: z.string().uuid(),
-  from_user_id: z.string().uuid().optional(),
-  to_user_id: z.string().uuid().optional(),
+  user_id: z.uuid(),
+  from_user_id: z.uuid().optional(),
+  to_user_id: z.uuid().optional(),
 });
 
 export const transactionFiltersSchema = z.object({
-  userId: z.string().uuid().optional(),
+  userId: z.uuid().optional(),
   type: z.enum([
     "income",
     "expense",
@@ -50,8 +50,8 @@ export const transactionFiltersSchema = z.object({
   status: z.string().optional(),
   isRecurring: z.boolean().optional(),
   isPriority: z.boolean().optional(),
-  startDate: z.string().datetime().optional(),
-  endDate: z.string().datetime().optional(),
+  startDate: z.iso.datetime().optional(),
+  endDate: z.iso.datetime().optional(),
   page: z.number().int().min(1).optional(),
   limit: z.number().int().min(1).max(100).optional(),
 });
@@ -64,7 +64,7 @@ export const tagSchema = z.object({
 
 // ── Budget Requests ──
 export const budgetRequestSchema = z.object({
-  to_user_id: z.string().uuid(),
+  to_user_id: z.uuid(),
   amount: z.number().positive(),
   reason: z.string().max(1000).optional(),
 });
@@ -77,8 +77,8 @@ export const budgetRequestFiltersSchema = z.object({
 export const goalSchema = z.object({
   name: z.string().min(1).max(200),
   target_amount: z.number().positive(),
-  deadline: z.string().date().optional(),
-  assigned_to: z.string().uuid().optional(),
+  deadline: z.iso.date().optional(),
+  assigned_to: z.uuid().optional(),
   status: z.enum(["active", "achieved", "cancelled"]).default("active"),
 });
 
@@ -89,13 +89,13 @@ export const debtSchema = z.object({
   current_balance: z.number().positive(),
   interest_rate: z.number().min(0).max(100).optional(),
   minimum_payment: z.number().positive().optional(),
-  due_date: z.string().date().optional(),
+  due_date: z.iso.date().optional(),
 });
 
 export const debtPaymentSchema = z.object({
-  debt_id: z.string().uuid(),
+  debt_id: z.uuid(),
   amount: z.number().positive(),
-  transaction_id: z.string().uuid().optional(),
+  transaction_id: z.uuid().optional(),
 });
 
 // ── Profile update ──

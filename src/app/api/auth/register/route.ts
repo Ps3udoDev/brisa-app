@@ -5,14 +5,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const registerSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   password: z.string().min(8).max(128),
   first_name: z.string().min(1).max(100).optional(),
   middle_name: z.string().max(100).optional(),
   last_name1: z.string().max(100).optional(),
   last_name2: z.string().max(100).optional(),
   role: z.enum(["asociado", "jefe_operador"]).default("asociado"),
-  parent_id: z.string().uuid().optional(),
+  parent_id: z.uuid().optional(),
 });
 
 export const POST = withAuth(

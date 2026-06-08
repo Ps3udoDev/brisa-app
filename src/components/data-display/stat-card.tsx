@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 interface StatCardProps {
@@ -23,7 +23,7 @@ export function StatCard({
   const isPositive = trend && trend >= 0;
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
@@ -67,6 +67,6 @@ export function StatCard({
           )}
         </div>
       )}
-    </motion.div>
+    </m.div>
   );
 }

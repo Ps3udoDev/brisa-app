@@ -1,38 +1,52 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useProfile } from "@/hooks/queries/use-profile";
-import { useAuth } from "@/hooks/use-auth";
-import { profileService } from "@/lib/services/profiles.service";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useProfile } from "@/hooks/queries/use-profile";
+import { useAuth } from "@/hooks/use-auth";
+import { profileService } from "@/lib/services/profiles.service";
+
+type ProfileForm = {
+  first_name: string;
+  middle_name: string;
+  last_name1: string;
+  last_name2: string;
+};
 
 export default function SettingsPage() {
   const { profile, isLoading, mutate } = useProfile();
   const { role } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
-  const [form, setForm] = useState({
-    first_name: "",
-    middle_name: "",
-    last_name1: "",
-    last_name2: "",
-  });
+  const [form, setForm] = useState<ProfileForm | null>(null);
 
-  // Sync form when profile loads
-  if (profile && !form.first_name && profile.first_name) {
-    setForm({
-      first_name: profile.first_name || "",
-      middle_name: profile.middle_name || "",
-      last_name1: profile.last_name1 || "",
-      last_name2: profile.last_name2 || "",
-    });
+  const profileForm = {
+    first_name: profile?.first_name || "",
+    middle_name: profile?.middle_name || "",
+    last_name1: profile?.last_name1 || "",
+    last_name2: profile?.last_name2 || "",
+  };
+  const formValues = form ?? profileForm;
+
+  function updateFormField(field: keyof ProfileForm, value: string) {
+    setForm((current) => ({
+      ...profileForm,
+      ...current,
+      [field]: value,
+    }));
   }
 
   async function handleSave(e: React.FormEvent) {
@@ -42,15 +56,17 @@ export default function SettingsPage() {
     setIsSaving(true);
     setMessage("");
 
+    let nextMessage = "Perfil actualizado correctamente";
+
     try {
-      await profileService.update(profile.id, form);
+      await profileService.update(profile.id, formValues);
       await mutate();
-      setMessage("Perfil actualizado correctamente");
-    } catch (err: any) {
-      setMessage(err.message || "Error al actualizar");
-    } finally {
-      setIsSaving(false);
+    } catch (err) {
+      nextMessage = err instanceof Error ? err.message : "Error al actualizar";
     }
+
+    setMessage(nextMessage);
+    setIsSaving(false);
   }
 
   const displayName =
@@ -77,9 +93,7 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Perfil</CardTitle>
-          <CardDescription>
-            Actualiza tu información personal
-          </CardDescription>
+          <CardDescription>Actualiza tu información personal</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
@@ -95,7 +109,9 @@ export default function SettingsPage() {
           </div>
 
           {message && (
-            <Alert variant={message.includes("Error") ? "destructive" : "default"}>
+            <Alert
+              variant={message.includes("Error") ? "destructive" : "default"}
+            >
               <AlertDescription>{message}</AlertDescription>
             </Alert>
           )}
@@ -106,9 +122,9 @@ export default function SettingsPage() {
                 <Label htmlFor="first_name">Nombre</Label>
                 <Input
                   id="first_name"
-                  value={form.first_name}
+                  value={formValues.first_name}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, first_name: e.target.value }))
+                    updateFormField("first_name", e.target.value)
                   }
                 />
               </div>
@@ -116,9 +132,9 @@ export default function SettingsPage() {
                 <Label htmlFor="middle_name">Segundo nombre</Label>
                 <Input
                   id="middle_name"
-                  value={form.middle_name}
+                  value={formValues.middle_name}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, middle_name: e.target.value }))
+                    updateFormField("middle_name", e.target.value)
                   }
                 />
               </div>
@@ -129,9 +145,9 @@ export default function SettingsPage() {
                 <Label htmlFor="last_name1">Apellido paterno</Label>
                 <Input
                   id="last_name1"
-                  value={form.last_name1}
+                  value={formValues.last_name1}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, last_name1: e.target.value }))
+                    updateFormField("last_name1", e.target.value)
                   }
                 />
               </div>
@@ -139,9 +155,9 @@ export default function SettingsPage() {
                 <Label htmlFor="last_name2">Apellido materno</Label>
                 <Input
                   id="last_name2"
-                  value={form.last_name2}
+                  value={formValues.last_name2}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, last_name2: e.target.value }))
+                    updateFormField("last_name2", e.target.value)
                   }
                 />
               </div>

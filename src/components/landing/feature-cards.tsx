@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { Wallet, Target, ShieldCheck, Zap } from "lucide-react";
 
 const features = [
@@ -48,7 +48,7 @@ export function FeatureCards() {
   return (
     <section className="py-20 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -62,9 +62,9 @@ export function FeatureCards() {
             Herramientas pensadas para equipos que crecen con orden y
             tranquilidad financiera.
           </p>
-        </motion.div>
+        </m.div>
 
-        <motion.div
+        <m.div
           variants={container}
           initial="hidden"
           whileInView="show"
@@ -72,7 +72,7 @@ export function FeatureCards() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {features.map((feature) => (
-            <motion.div
+            <m.div
               key={feature.title}
               variants={item}
               whileHover={{ y: -6, transition: { duration: 0.3 } }}
@@ -89,9 +89,9 @@ export function FeatureCards() {
               <p className="text-sm text-[#8A9597] leading-relaxed">
                 {feature.desc}
               </p>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

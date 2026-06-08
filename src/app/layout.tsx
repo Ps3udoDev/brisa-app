@@ -3,6 +3,7 @@ import { Source_Serif_4, Manrope } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import { AnimationProvider } from "@/components/providers/animation-provider";
 
 const sourceSerif = Source_Serif_4({
   variable: "--font-source-serif",
@@ -34,10 +35,12 @@ export default function RootLayout({
       className={`${sourceSerif.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
-        <TooltipProvider>
-          {children}
-          <Toaster position="top-right" richColors />
-        </TooltipProvider>
+        <AnimationProvider>
+          <TooltipProvider>
+            {children}
+            <Toaster position="top-right" richColors />
+          </TooltipProvider>
+        </AnimationProvider>
       </body>
     </html>
   );

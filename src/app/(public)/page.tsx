@@ -1,11 +1,18 @@
+import type { Metadata } from "next";
 import {
-  Navbar,
-  HeroSection,
-  FeatureCards,
-  HowItWorks,
   CTASection,
+  FeatureCards,
   Footer,
+  HeroSection,
+  HowItWorks,
+  Navbar,
 } from "@/components/landing";
+
+export const metadata: Metadata = {
+  title: "Brisa | Gestion financiera para equipos",
+  description:
+    "Administra presupuestos, asociados y movimientos financieros de tu equipo desde una sola plataforma.",
+};
 
 export default function LandingPage() {
   return (

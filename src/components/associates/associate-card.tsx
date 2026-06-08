@@ -1,14 +1,9 @@
 "use client";
 
-import { motion } from "motion/react";
+import { ChevronRight, Shield, User, Users } from "lucide-react";
+import { m } from "motion/react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import {
-  User,
-  Shield,
-  Users,
-  ChevronRight,
-} from "lucide-react";
 import type { Profile } from "@/types/domain";
 
 interface AssociateCardProps {
@@ -23,7 +18,8 @@ const roleConfig: Record<
   super_admin: {
     label: "Super Admin",
     icon: <Shield className="w-3.5 h-3.5" />,
-    variant: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+    variant:
+      "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
   },
   jefe_operador: {
     label: "Jefe Operador",
@@ -33,31 +29,32 @@ const roleConfig: Record<
   asociado: {
     label: "Asociado",
     icon: <User className="w-3.5 h-3.5" />,
-    variant: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+    variant:
+      "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
   },
 };
 
+const currencyFormatter = new Intl.NumberFormat("es-ES", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 0,
+});
+
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(value);
+  return currencyFormatter.format(value);
 }
 
-export function AssociateCard({
-  profile,
-  index = 0,
-}: AssociateCardProps) {
+export function AssociateCard({ profile, index = 0 }: AssociateCardProps) {
   const displayName =
     [profile.first_name, profile.last_name1].filter(Boolean).join(" ") ||
     "Sin nombre";
 
-  const roleInfo = roleConfig[profile.role ?? "asociado"] ?? roleConfig.asociado;
+  const roleInfo =
+    roleConfig[profile.role ?? "asociado"] ?? roleConfig.asociado;
   const balance = profile.user_balances?.balance ?? 0;
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -78,7 +75,7 @@ export function AssociateCard({
                   <span
                     className={cn(
                       "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium",
-                      roleInfo.variant
+                      roleInfo.variant,
                     )}
                   >
                     {roleInfo.icon}
@@ -103,7 +100,7 @@ export function AssociateCard({
                     "text-sm font-semibold",
                     balance >= 0
                       ? "text-slate-900 dark:text-white"
-                      : "text-red-600 dark:text-red-400"
+                      : "text-red-600 dark:text-red-400",
                   )}
                 >
                   {formatCurrency(balance)}
@@ -114,6 +111,6 @@ export function AssociateCard({
           </div>
         </div>
       </Link>
-    </motion.div>
+    </m.div>
   );
 }

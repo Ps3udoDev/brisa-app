@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 
 const steps = [
   {
@@ -24,7 +24,7 @@ export function HowItWorks() {
   return (
     <section id="como-funciona" className="py-20 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -37,12 +37,12 @@ export function HowItWorks() {
           <p className="text-[#8A9597]">
             Tres pasos para transformar tu gestión financiera.
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="relative space-y-12">
           {/* Connecting line */}
           <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-[#E2875C]/20 hidden sm:block">
-            <motion.div
+            <m.div
               initial={{ height: 0 }}
               whileInView={{ height: "100%" }}
               viewport={{ once: true }}
@@ -52,7 +52,7 @@ export function HowItWorks() {
           </div>
 
           {steps.map((item, i) => (
-            <motion.div
+            <m.div
               key={item.step}
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -61,17 +61,17 @@ export function HowItWorks() {
               className="relative flex gap-6"
             >
               <div className="hidden sm:flex flex-col items-center">
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
+                <m.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: 0.3 * i, type: "spring" }}
                   className="w-12 h-12 rounded-full bg-[#E2875C] text-white flex items-center justify-center font-bold text-sm z-10 shadow-[0_4px_12px_rgba(226,135,92,0.3)]"
                 >
                   {item.step}
-                </motion.div>
+                </m.div>
               </div>
-              <motion.div
+              <m.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3 }}
                 className="flex-1 bg-white rounded-2xl p-6 sm:p-8 border border-[#8A9597]/10 hover:border-[#E2875C]/20 hover:shadow-[0_8px_30px_rgba(44,53,57,0.04)] transition-all duration-300"
@@ -83,8 +83,8 @@ export function HowItWorks() {
                   {item.title}
                 </h3>
                 <p className="text-[#8A9597] leading-relaxed">{item.desc}</p>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           ))}
         </div>
       </div>

@@ -1,25 +1,27 @@
 "use client";
 
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Loader2,
+  PiggyBank,
+  Wallet,
+} from "lucide-react";
+import { m } from "motion/react";
+import { MonthlyTrendChart } from "@/components/data-display/monthly-trend-chart";
+import { StatCard } from "@/components/data-display/stat-card";
 import { useProfile } from "@/hooks/queries/use-profile";
 import { useTransactions } from "@/hooks/queries/use-transactions";
 import { useUserBalance } from "@/hooks/queries/use-user-balances";
 import { useMonthlyExpenses } from "@/hooks/queries/use-views";
-import { StatCard } from "@/components/data-display/stat-card";
-import { MonthlyTrendChart } from "@/components/data-display/monthly-trend-chart";
-import { motion } from "motion/react";
-import {
-  Wallet,
-  ArrowUpRight,
-  ArrowDownRight,
-  PiggyBank,
-  Loader2,
-} from "lucide-react";
+
+const currencyFormatter = new Intl.NumberFormat("es-ES", {
+  style: "currency",
+  currency: "USD",
+});
 
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
+  return currencyFormatter.format(value);
 }
 
 export default function DashboardPage() {
@@ -47,11 +49,18 @@ export default function DashboardPage() {
   });
 
   const monthlyIncome = currentMonthTransactions
-    .filter((t) => t.type === "income" || (t.type === "budget_assignment" && t.amount > 0))
+    .filter(
+      (t) =>
+        t.type === "income" || (t.type === "budget_assignment" && t.amount > 0),
+    )
     .reduce((sum, t) => sum + t.amount, 0);
 
   const monthlyExpense = currentMonthTransactions
-    .filter((t) => t.type === "expense" || (t.type === "budget_assignment" && t.amount < 0))
+    .filter(
+      (t) =>
+        t.type === "expense" ||
+        (t.type === "budget_assignment" && t.amount < 0),
+    )
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   const isLoading = profileLoading || transactionsLoading || balanceLoading;
@@ -67,7 +76,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -78,7 +87,7 @@ export default function DashboardPage() {
         <p className="text-slate-500 dark:text-slate-400 mt-1">
           Aquí está el resumen de tu situación financiera
         </p>
-      </motion.div>
+      </m.div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -118,7 +127,7 @@ export default function DashboardPage() {
           <MonthlyTrendChart data={expenses} isLoading={expensesLoading} />
         </div>
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -135,7 +144,7 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-3">
               {transactions.map((t, i) => (
-                <motion.div
+                <m.div
                   key={t.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -158,9 +167,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-slate-900 dark:text-white capitalize">
-                        {t.type === "budget_assignment"
-                          ? "Asignación"
-                          : t.type}
+                        {t.type === "budget_assignment" ? "Asignación" : t.type}
                       </p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         {t.description || "Sin descripción"}
@@ -177,11 +184,11 @@ export default function DashboardPage() {
                     {t.amount > 0 ? "+" : ""}
                     {formatCurrency(t.amount)}
                   </p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
           )}
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

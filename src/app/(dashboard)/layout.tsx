@@ -1,6 +1,7 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopBar } from "@/components/layout/top-bar";
 import { AuthHydrator } from "@/components/layout/auth-hydrator";
+import { AnimationProvider } from "@/components/providers/animation-provider";
 import { SWRProvider } from "@/lib/swr/provider";
 
 export default function DashboardLayout({
@@ -11,13 +12,15 @@ export default function DashboardLayout({
   return (
     <SWRProvider>
       <AuthHydrator>
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-          <Sidebar />
-          <div className="md:ml-64 flex flex-col min-h-screen">
-            <TopBar />
-            <main className="flex-1 p-4 lg:p-8">{children}</main>
+        <AnimationProvider>
+          <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+            <Sidebar />
+            <div className="md:ml-64 flex flex-col min-h-screen">
+              <TopBar />
+              <main className="flex-1 p-4 lg:p-8">{children}</main>
+            </div>
           </div>
-        </div>
+        </AnimationProvider>
       </AuthHydrator>
     </SWRProvider>
   );

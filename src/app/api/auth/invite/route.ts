@@ -5,9 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const inviteSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   role: z.enum(["asociado", "jefe_operador"]).default("asociado"),
-  parent_id: z.string().uuid().optional(),
+  parent_id: z.uuid().optional(),
   first_name: z.string().optional(),
 });
 

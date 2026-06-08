@@ -1,21 +1,27 @@
 "use client";
 
-import { motion } from "motion/react";
+import { Loader2 } from "lucide-react";
+import { m } from "motion/react";
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
-import { Loader2 } from "lucide-react";
 
 interface MonthlyTrendChartProps {
   data: { month: string; total_expense: number }[];
   isLoading?: boolean;
 }
+
+const currencyFormatter = new Intl.NumberFormat("es-ES", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 0,
+});
 
 function formatMonth(value: string) {
   const date = new Date(value);
@@ -23,11 +29,7 @@ function formatMonth(value: string) {
 }
 
 function formatCurrency(value: number) {
-  return new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-  }).format(value);
+  return currencyFormatter.format(value);
 }
 
 export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
@@ -45,7 +47,7 @@ export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
   }));
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.3 }}
@@ -93,7 +95,10 @@ export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
                 borderRadius: "12px",
                 boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
               }}
-              formatter={(value) => [formatCurrency(Number(value) || 0), "Gastos"]}
+              formatter={(value) => [
+                formatCurrency(Number(value) || 0),
+                "Gastos",
+              ]}
             />
             <Area
               type="monotone"
@@ -106,6 +111,6 @@ export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </motion.div>
+    </m.div>
   );
 }
