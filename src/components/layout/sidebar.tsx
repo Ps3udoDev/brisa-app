@@ -21,15 +21,15 @@ import {
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/associates", label: "Associates", icon: Users },
-  { href: "/transactions", label: "Transactions", icon: Receipt },
-  { href: "/goals", label: "Goals", icon: Target },
-  { href: "/debts", label: "Debts", icon: Wallet },
-  { href: "/requests", label: "Requests", icon: HandCoins },
-  { href: "/reports", label: "Reports", icon: BarChart3 },
-  { href: "/simulator", label: "Simulator", icon: Calculator },
-  { href: "/notifications", label: "Notifications", icon: Bell },
+  { href: "/dashboard", label: "Panel", icon: LayoutDashboard },
+  { href: "/associates", label: "Asociados", icon: Users },
+  { href: "/transactions", label: "Transacciones", icon: Receipt },
+  { href: "/goals", label: "Metas", icon: Target },
+  { href: "/debts", label: "Deudas", icon: Wallet },
+  { href: "/requests", label: "Solicitudes", icon: HandCoins },
+  { href: "/reports", label: "Reportes", icon: BarChart3 },
+  { href: "/simulator", label: "Simulador", icon: Calculator },
+  { href: "/notifications", label: "Notificaciones", icon: Bell },
 ];
 
 export function Sidebar() {
@@ -40,13 +40,13 @@ export function Sidebar() {
       {/* Brand */}
       <div className="p-6">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <Logo width={40} height={40} />
+          <Logo width={74} height={74} />
           <div>
             <h1 className="font-bold text-xl text-slate-900 dark:text-white tracking-tight">
               Brisa
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Financial Serenity
+              Serenidad Financiera
             </p>
           </div>
         </Link>
@@ -86,7 +86,7 @@ export function Sidebar() {
           )}
         >
           <Settings className="w-5 h-5" />
-          Settings
+          Configuración
         </Link>
         <form action={signOut}>
           <Button
@@ -95,7 +95,7 @@ export function Sidebar() {
             className="w-full justify-start gap-3 px-4 py-3 h-auto rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             <LogOut className="w-5 h-5" />
-            Logout
+            Cerrar sesión
           </Button>
         </form>
       </div>

@@ -17,7 +17,7 @@ export function Footer() {
             Iniciar sesión
           </Link>
           <Link href="/login" className="hover:text-[#E2875C] transition-colors">
-            Dashboard
+            Panel
           </Link>
         </nav>
 

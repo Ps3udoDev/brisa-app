@@ -17,11 +17,10 @@ export function TopBar() {
       {/* Mobile menu */}
       <div className="flex items-center gap-4">
         <Sheet>
-          <SheetTrigger className="md:hidden">
-            <Button variant="ghost" size="icon">
-              <Menu className="w-5 h-5" />
-            </Button>
-          </SheetTrigger>
+          <SheetTrigger
+            className="md:hidden"
+            render={<Button variant="ghost" size="icon"><Menu className="w-5 h-5" /></Button>}
+          />
           <SheetContent side="left" className="p-0 w-64">
             <Sidebar />
           </SheetContent>
@@ -31,7 +30,7 @@ export function TopBar() {
         <div className="relative hidden sm:block">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <Input
-            placeholder="Search..."
+            placeholder="Buscar..."
             className="pl-9 w-64 bg-slate-100 dark:bg-slate-800 border-0"
           />
         </div>
@@ -41,7 +40,7 @@ export function TopBar() {
       <div className="flex items-center gap-3">
         <Button className="hidden sm:flex bg-orange-500 hover:bg-orange-600 text-white rounded-full">
           <Plus className="w-4 h-4 mr-2" />
-          Add Transaction
+          Agregar transacción
         </Button>
 
         <Button variant="ghost" size="icon" className="relative">
