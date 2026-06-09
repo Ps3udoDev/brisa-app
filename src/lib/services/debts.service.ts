@@ -84,7 +84,7 @@ export const debtService = {
     const client = getClient();
     const { data, error } = await client
       .from("debt_payments")
-      .select("*, transactions(transaction_id)")
+      .select("*")
       .eq("debt_id", debtId)
       .order("payment_date", { ascending: false });
     handleError(error);
