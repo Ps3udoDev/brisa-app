@@ -111,41 +111,54 @@ export type Database = {
       debts: {
         Row: {
           created_at: string | null
+          creator_id: string | null
           current_balance: number
           due_date: string | null
           id: string
           interest_rate: number | null
           minimum_payment: number | null
           name: string
+          paid_off_at: string | null
           priority_order: number | null
           total_amount: number
           user_id: string
         }
         Insert: {
           created_at?: string | null
+          creator_id?: string | null
           current_balance: number
           due_date?: string | null
           id?: string
           interest_rate?: number | null
           minimum_payment?: number | null
           name: string
+          paid_off_at?: string | null
           priority_order?: number | null
           total_amount: number
           user_id: string
         }
         Update: {
           created_at?: string | null
+          creator_id?: string | null
           current_balance?: number
           due_date?: string | null
           id?: string
           interest_rate?: number | null
           minimum_payment?: number | null
           name?: string
+          paid_off_at?: string | null
           priority_order?: number | null
           total_amount?: number
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "debts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "debts_user_id_fkey"
             columns: ["user_id"]
@@ -521,10 +534,43 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_debt_payments: {
+        Row: {
+          month: string | null
+          total_debt_paid: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       monthly_expenses: {
         Row: {
           month: string | null
           total_expense: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monthly_outflow_breakdown: {
+        Row: {
+          debt_payments: number | null
+          month: string | null
+          pure_expense: number | null
           user_id: string | null
         }
         Relationships: [
@@ -576,6 +622,19 @@ export type Database = {
           t2_id: string
         }[]
       }
+      create_debt_with_payment: {
+        Args: {
+          p_creator_id?: string
+          p_due_date?: string
+          p_interest_rate?: number
+          p_minimum_payment?: number
+          p_name: string
+          p_paid_amount?: number
+          p_total_amount: number
+          p_user_id: string
+        }
+        Returns: string
+      }
       create_notification: {
         Args: {
           p_link?: string
@@ -601,6 +660,13 @@ export type Database = {
       mark_notification_read: {
         Args: { p_notification_id: string }
         Returns: undefined
+      }
+      pay_debt: {
+        Args: { p_amount: number; p_debt_id: string; p_description?: string }
+        Returns: {
+          payment_id: string
+          tx_id: string
+        }[]
       }
     }
     Enums: {

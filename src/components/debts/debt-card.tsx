@@ -1,9 +1,10 @@
 "use client";
 
 import { m } from "motion/react";
-import { CreditCard, Calendar, TrendingDown, AlertCircle } from "lucide-react";
+import { CreditCard, Calendar, TrendingDown, AlertCircle, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Debt } from "@/types/domain";
+import { EditDebtDialog } from "./edit-debt-dialog";
 
 interface DebtCardProps {
   debt: Debt;
@@ -33,12 +34,13 @@ export function DebtCard({ debt, index = 0, showPriority = false }: DebtCardProp
   const isPaidOff = debt.current_balance <= 0;
 
   return (
-    <m.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: index * 0.04 }}
-      className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-all duration-300"
-    >
+    <EditDebtDialog debt={debt}>
+      <m.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: index * 0.04 }}
+        className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-all duration-300 cursor-pointer group"
+      >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className={cn(
@@ -63,14 +65,17 @@ export function DebtCard({ debt, index = 0, showPriority = false }: DebtCardProp
               Prioridad #{debt.priority_order}
             </span>
           )}
-          <span className={cn(
-            "text-xs font-medium px-2 py-1 rounded-full",
-            isPaidOff
-              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-              : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-          )}>
-            {isPaidOff ? "Liquidada" : "Activa"}
-          </span>
+          <div className="flex items-center gap-1">
+            <span className={cn(
+              "text-xs font-medium px-2 py-1 rounded-full",
+              isPaidOff
+                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+            )}>
+              {isPaidOff ? "Liquidada" : "Activa"}
+            </span>
+            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-orange-400 transition-colors" />
+          </div>
         </div>
       </div>
 
@@ -122,6 +127,7 @@ export function DebtCard({ debt, index = 0, showPriority = false }: DebtCardProp
           Tasa de interés: {debt.interest_rate}%
         </div>
       )}
-    </m.div>
+      </m.div>
+    </EditDebtDialog>
   );
 }
