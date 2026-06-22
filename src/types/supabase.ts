@@ -168,6 +168,49 @@ export type Database = {
           },
         ]
       }
+      goal_contributors: {
+        Row: {
+          committed_amount: number
+          created_at: string | null
+          goal_id: string
+          user_id: string
+        }
+        Insert: {
+          committed_amount?: number
+          created_at?: string | null
+          goal_id: string
+          user_id: string
+        }
+        Update: {
+          committed_amount?: number
+          created_at?: string | null
+          goal_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_contributors_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goal_progress"
+            referencedColumns: ["goal_id"]
+          },
+          {
+            foreignKeyName: "goal_contributors_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "goal_contributors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goals: {
         Row: {
           assigned_to: string | null
@@ -301,39 +344,146 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           first_name: string | null
           id: string
+          is_active: boolean
           last_name1: string | null
           last_name2: string | null
           middle_name: string | null
           parent_id: string | null
+          phone: string | null
           role: string
+          timezone: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           first_name?: string | null
           id: string
+          is_active?: boolean
           last_name1?: string | null
           last_name2?: string | null
           middle_name?: string | null
           parent_id?: string | null
+          phone?: string | null
           role?: string
+          timezone?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           first_name?: string | null
           id?: string
+          is_active?: boolean
           last_name1?: string | null
           last_name2?: string | null
           middle_name?: string | null
           parent_id?: string | null
+          phone?: string | null
           role?: string
+          timezone?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "profiles_parent_id_fkey"
             columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          created_at: string | null
+          endpoint: string
+          id: string
+          subscription: Json
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          subscription: Json
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          subscription?: Json
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recurring_rules: {
+        Row: {
+          amount: number
+          created_at: string | null
+          creator_id: string
+          day_of_month: number | null
+          description: string | null
+          frequency: string
+          id: string
+          is_active: boolean
+          last_run_at: string | null
+          next_run_date: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          creator_id: string
+          day_of_month?: number | null
+          description?: string | null
+          frequency: string
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          next_run_date: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          creator_id?: string
+          day_of_month?: number | null
+          description?: string | null
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          next_run_date?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recurring_rules_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recurring_rules_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -409,6 +559,8 @@ export type Database = {
           creator_id: string
           description: string | null
           from_user_id: string | null
+          goal_id: string | null
+          group_id: string | null
           id: string
           is_priority: boolean | null
           is_recurring: boolean | null
@@ -425,6 +577,8 @@ export type Database = {
           creator_id: string
           description?: string | null
           from_user_id?: string | null
+          goal_id?: string | null
+          group_id?: string | null
           id?: string
           is_priority?: boolean | null
           is_recurring?: boolean | null
@@ -441,6 +595,8 @@ export type Database = {
           creator_id?: string
           description?: string | null
           from_user_id?: string | null
+          goal_id?: string | null
+          group_id?: string | null
           id?: string
           is_priority?: boolean | null
           is_recurring?: boolean | null
@@ -464,6 +620,20 @@ export type Database = {
             columns: ["from_user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goal_progress"
+            referencedColumns: ["goal_id"]
+          },
+          {
+            foreignKeyName: "transactions_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "goals"
             referencedColumns: ["id"]
           },
           {
@@ -517,6 +687,7 @@ export type Database = {
           goal_id: string | null
           name: string | null
           target_amount: number | null
+          total_committed: number | null
         }
         Insert: {
           current_saved?: never
@@ -524,6 +695,7 @@ export type Database = {
           goal_id?: string | null
           name?: string | null
           target_amount?: number | null
+          total_committed?: never
         }
         Update: {
           current_saved?: never
@@ -531,6 +703,7 @@ export type Database = {
           goal_id?: string | null
           name?: string | null
           target_amount?: number | null
+          total_committed?: never
         }
         Relationships: []
       }
@@ -622,6 +795,10 @@ export type Database = {
           t2_id: string
         }[]
       }
+      contribute_to_goal: {
+        Args: { p_amount: number; p_description?: string; p_goal_id: string }
+        Returns: string
+      }
       create_debt_with_payment: {
         Args: {
           p_creator_id?: string
@@ -645,6 +822,7 @@ export type Database = {
         }
         Returns: string
       }
+      delete_transaction: { Args: { p_tx_id: string }; Returns: undefined }
       get_all_subordinates: { Args: { parent_id: string }; Returns: string[] }
       has_permission: { Args: { perm: string; uid: string }; Returns: boolean }
       is_jefe_operador: { Args: { uid: string }; Returns: boolean }
@@ -667,6 +845,11 @@ export type Database = {
           payment_id: string
           tx_id: string
         }[]
+      }
+      run_due_recurring_rules: { Args: never; Returns: number }
+      update_transaction: {
+        Args: { p_amount: number; p_description?: string; p_tx_id: string }
+        Returns: undefined
       }
     }
     Enums: {

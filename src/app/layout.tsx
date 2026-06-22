@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import { Source_Serif_4, Manrope } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Manrope, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { Toaster } from "@/components/ui/sonner";
 import { AnimationProvider } from "@/components/providers/animation-provider";
+import { PwaRegister } from "@/components/pwa/pwa-register";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const sourceSerif = Source_Serif_4({
   variable: "--font-source-serif",
@@ -22,6 +23,20 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "Brisa — Financial Serenity",
   description: "Warm financial minimalism for mindful wealth management",
+  applicationName: "Brisa",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Brisa",
+  },
+  icons: {
+    icon: "/icon-brisa.png",
+    apple: "/icon-brisa.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f97316",
 };
 
 export default function RootLayout({
@@ -42,6 +57,7 @@ export default function RootLayout({
             <Toaster position="top-right" richColors />
           </TooltipProvider>
         </AnimationProvider>
+        <PwaRegister />
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 import { Loader2, Shield, UserPlus, Users, Wallet } from "lucide-react";
 import { m } from "motion/react";
 import { useState } from "react";
+import { AssignBudgetDialog } from "@/components/associates/assign-budget-dialog";
 import { AssociateCard } from "@/components/associates/associate-card";
 import { RegisterAssociateDialog } from "@/components/associates/register-associate-dialog";
 import { StatCard } from "@/components/data-display/stat-card";
@@ -73,7 +74,12 @@ export default function AssociatesPage() {
           </p>
         </div>
 
-        <RegisterAssociateDialog />
+        {canRegister && (
+          <div className="flex items-center gap-3">
+            <AssignBudgetDialog />
+            <RegisterAssociateDialog />
+          </div>
+        )}
       </m.div>
 
       {/* Stats */}

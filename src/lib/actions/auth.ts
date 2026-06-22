@@ -6,12 +6,12 @@ import { createServerSB } from "@/lib/supabase/server";
 
 type SignInResult =
   | {
-    success: true;
-  }
+      success: true;
+    }
   | {
-    success: false;
-    error: string;
-  };
+      success: false;
+      error: string;
+    };
 
 /**
  * Public server action.
@@ -21,7 +21,7 @@ type SignInResult =
  */
 export async function signIn(
   email: string,
-  password: string
+  password: string,
 ): Promise<SignInResult> {
   const normalizedEmail = email?.trim().toLowerCase();
 
@@ -34,7 +34,7 @@ export async function signIn(
 
   const supabase = await createServerSB();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: normalizedEmail,
     password,
   });
@@ -50,11 +50,61 @@ export async function signIn(
     };
   }
 
+  // Bloquear el acceso a cuentas desactivadas (is_active = false).
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_active")
+    .eq("id", data.user.id)
+    .single();
+
+  if (profile && profile.is_active === false) {
+    await supabase.auth.signOut();
+    return {
+      success: false,
+      error: "Tu cuenta está desactivada. Contacta a un administrador.",
+    };
+  }
+
   revalidatePath("/", "layout");
 
   return {
     success: true,
   };
+}
+
+/**
+ * Actualiza el correo y/o la contraseña del usuario autenticado vía Supabase
+ * Auth (sobre su propia cuenta). Cambiar el correo dispara un email de
+ * confirmación según la configuración del proyecto.
+ */
+export async function updateAccount(input: {
+  email?: string;
+  password?: string;
+}): Promise<{ success: boolean; error?: string }> {
+  const supabase = await createServerSB();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "No autenticado" };
+  }
+
+  const updates: { email?: string; password?: string } = {};
+  if (input.email) updates.email = input.email.trim().toLowerCase();
+  if (input.password) updates.password = input.password;
+
+  if (Object.keys(updates).length === 0) {
+    return { success: false, error: "Nada que actualizar" };
+  }
+
+  const { error } = await supabase.auth.updateUser(updates);
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath("/", "layout");
+  return { success: true };
 }
 
 export async function signOut() {

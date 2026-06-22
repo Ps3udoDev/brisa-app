@@ -1,11 +1,26 @@
 "use client";
 
 import useSWR from "swr";
+import type { GoalContributor } from "@/lib/services/goals.service";
 import { goalService } from "@/lib/services/goals.service";
 import { KEYS } from "@/lib/swr/keys";
 import type { Goal } from "@/types/domain";
 
-export function useGoals(filters?: { assignedTo?: string; creatorId?: string; userId?: string; status?: string }) {
+type GoalWithProgress = Goal & {
+  goal_progress: {
+    current_saved: number | null;
+    target_amount: number | null;
+    total_committed: number | null;
+  } | null;
+  contributors: GoalContributor[];
+};
+
+export function useGoals(filters?: {
+  assignedTo?: string;
+  creatorId?: string;
+  userId?: string;
+  status?: string;
+}) {
   const key = KEYS.goals.list(filters ?? {});
 
   const { data, error, isLoading } = useSWR(
@@ -14,11 +29,11 @@ export function useGoals(filters?: { assignedTo?: string; creatorId?: string; us
     {
       revalidateOnFocus: false,
       keepPreviousData: true,
-    }
+    },
   );
 
   return {
-    goals: (data ?? []) as (Goal & { goal_progress: { current_saved: number | null; target_amount: number | null } | null })[],
+    goals: (data ?? []) as GoalWithProgress[],
     error,
     isLoading,
   };
@@ -33,11 +48,18 @@ export function useGoal(goalId?: string) {
     {
       revalidateOnFocus: false,
       keepPreviousData: true,
-    }
+    },
   );
 
   return {
-    goal: data as (Goal & { goal_progress: { current_saved: number | null; target_amount: number | null } | null }) | undefined,
+    goal: data as
+      | (Goal & {
+          goal_progress: {
+            current_saved: number | null;
+            target_amount: number | null;
+          } | null;
+        })
+      | undefined,
     error,
     isLoading,
   };

@@ -30,7 +30,9 @@ export const transactionSchema = z.object({
   description: z.string().max(500).optional(),
   justification: z.string().max(2000).optional(),
   is_recurring: z.boolean().default(false),
-  recurring_freq: z.enum(["daily", "weekly", "biweekly", "monthly", "yearly"]).optional(),
+  recurring_freq: z
+    .enum(["daily", "weekly", "biweekly", "monthly", "yearly"])
+    .optional(),
   is_priority: z.boolean().default(true),
   status: z.enum(["completed", "pending"]).default("completed"),
   user_id: z.uuid(),
@@ -40,13 +42,15 @@ export const transactionSchema = z.object({
 
 export const transactionFiltersSchema = z.object({
   userId: z.uuid().optional(),
-  type: z.enum([
-    "income",
-    "expense",
-    "budget_assignment",
-    "debt_payment",
-    "goal_contribution",
-  ]).optional(),
+  type: z
+    .enum([
+      "income",
+      "expense",
+      "budget_assignment",
+      "debt_payment",
+      "goal_contribution",
+    ])
+    .optional(),
   status: z.string().optional(),
   isRecurring: z.boolean().optional(),
   isPriority: z.boolean().optional(),
@@ -104,6 +108,25 @@ export const profileUpdateSchema = z.object({
   middle_name: z.string().max(100).optional(),
   last_name1: z.string().max(100).optional(),
   last_name2: z.string().max(100).optional(),
+  phone: z.string().max(30).optional(),
+  avatar_url: z.url().max(500).optional().or(z.literal("")),
+  timezone: z.string().max(60).optional(),
+});
+
+// ── Account (Supabase Auth) ──
+export const accountUpdateSchema = z
+  .object({
+    email: z.email().optional(),
+    password: z.string().min(8, "Mínimo 8 caracteres").max(128).optional(),
+  })
+  .refine((d) => d.email || d.password, {
+    message: "Indica un nuevo correo o una nueva contraseña",
+  });
+
+// ── Gestión de usuarios (super_admin) ──
+export const toggleUserActiveSchema = z.object({
+  userId: z.uuid(),
+  isActive: z.boolean(),
 });
 
 // ── Types inferidos ──
@@ -116,3 +139,5 @@ export type GoalInput = z.infer<typeof goalSchema>;
 export type DebtInput = z.infer<typeof debtSchema>;
 export type DebtPaymentInput = z.infer<typeof debtPaymentSchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
+export type AccountUpdateInput = z.infer<typeof accountUpdateSchema>;
+export type ToggleUserActiveInput = z.infer<typeof toggleUserActiveSchema>;

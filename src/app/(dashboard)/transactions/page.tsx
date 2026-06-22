@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Loader2,
+  Receipt,
+  Wallet,
+} from "lucide-react";
 import { m } from "motion/react";
+import { useState } from "react";
+import { StatCard } from "@/components/data-display/stat-card";
+import { CreateTransactionDialog } from "@/components/transactions/create-transaction-dialog";
+import { RecurringRulesSection } from "@/components/transactions/recurring-rules-section";
+import { TransactionCard } from "@/components/transactions/transaction-card";
 import { useProfile } from "@/hooks/queries/use-profile";
 import { useTransactions } from "@/hooks/queries/use-transactions";
-import { TransactionCard } from "@/components/transactions/transaction-card";
-import { CreateTransactionDialog } from "@/components/transactions/create-transaction-dialog";
-import { StatCard } from "@/components/data-display/stat-card";
-import { Loader2, ArrowUpRight, ArrowDownRight, Wallet, Receipt } from "lucide-react";
 
 const typeFilters: { value: string; label: string }[] = [
   { value: "all", label: "Todas" },
@@ -32,19 +39,31 @@ export default function TransactionsPage() {
   const filters =
     typeFilter === "all"
       ? { userId: me?.id, limit: 50 }
-      : { userId: me?.id, type: typeFilter as any, limit: 50 };
+      : {
+          userId: me?.id,
+          type: typeFilter as
+            | "income"
+            | "expense"
+            | "budget_assignment"
+            | "debt_payment"
+            | "goal_contribution",
+          limit: 50,
+        };
 
   const { transactions, isLoading } = useTransactions(filters);
 
   const income = transactions
     .filter(
-      (t) => t.type === "income" || (t.type === "budget_assignment" && t.amount > 0)
+      (t) =>
+        t.type === "income" || (t.type === "budget_assignment" && t.amount > 0),
     )
     .reduce((sum, t) => sum + t.amount, 0);
 
   const expense = transactions
     .filter(
-      (t) => t.type === "expense" || (t.type === "budget_assignment" && t.amount < 0)
+      (t) =>
+        t.type === "expense" ||
+        (t.type === "budget_assignment" && t.amount < 0),
     )
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
@@ -93,6 +112,9 @@ export default function TransactionsPage() {
         />
       </div>
 
+      {/* Pagos recurrentes */}
+      <RecurringRulesSection />
+
       {/* Filters */}
       <div className="flex items-center gap-2 flex-wrap">
         {typeFilters.map((filter) => (
@@ -133,7 +155,12 @@ export default function TransactionsPage() {
       ) : (
         <div className="space-y-3">
           {transactions.map((tx, i) => (
-            <TransactionCard key={tx.id} transaction={tx} index={i} />
+            <TransactionCard
+              key={tx.id}
+              transaction={tx}
+              index={i}
+              currentUserId={me?.id}
+            />
           ))}
         </div>
       )}

@@ -14,10 +14,10 @@ export const invalidateEntity = async (entity: string) => {
  */
 export const invalidateKeys = async (
   keys: (readonly (string | number | object | undefined)[])[],
-  opts?: SWRConfiguration
+  opts?: SWRConfiguration,
 ) => {
   await Promise.all(
-    keys.map((k) => mutate(k, undefined, { ...opts, revalidate: true }))
+    keys.map((k) => mutate(k, undefined, { ...opts, revalidate: true })),
   );
 };
 
@@ -35,6 +35,9 @@ export const CASCADE_INVALIDATIONS: Record<string, string[]> = {
   debts: ["v_debts_snowball", "user_balances"],
   goals: ["goal_progress"],
   profiles: ["profiles", "user_balances", "permissions"],
+  // Materializar reglas crea transacciones (afecta saldos); útil cuando se
+  // ejecuta "ahora" desde la app.
+  recurring_rules: ["transactions", "user_balances"],
 };
 
 export const invalidateWithCascade = async (sourceEntity: string) => {

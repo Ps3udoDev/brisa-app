@@ -1,24 +1,25 @@
 "use client";
 
-import { m } from "motion/react";
-import Link from "next/link";
-import { useProfile } from "@/hooks/queries/use-profile";
-import { useNotifications } from "@/hooks/queries/use-notifications";
 import {
+  ArrowRight,
   Bell,
   CheckCheck,
-  Target,
-  HandCoins,
   CheckCircle2,
-  XCircle,
+  HandCoins,
   Loader2,
-  ArrowRight,
-  User,
+  PiggyBank,
+  Target,
+  Wallet,
+  XCircle,
 } from "lucide-react";
+import { m } from "motion/react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { useNotifications } from "@/hooks/queries/use-notifications";
+import { useProfile } from "@/hooks/queries/use-profile";
 import type { Notification } from "@/lib/services/notifications.service";
+import { cn } from "@/lib/utils";
 
 function timeAgo(dateStr: string | null) {
   if (!dateStr) return "";
@@ -65,6 +66,21 @@ const typeConfig: Record<
     bg: "bg-slate-100 dark:bg-slate-800",
     label: "Recordatorio",
   },
+  debt_paid_off: {
+    icon: <CheckCircle2 className="w-5 h-5 text-emerald-600" />,
+    bg: "bg-emerald-100 dark:bg-emerald-900/30",
+    label: "Deuda saldada",
+  },
+  budget_assigned: {
+    icon: <Wallet className="w-5 h-5 text-blue-600" />,
+    bg: "bg-blue-100 dark:bg-blue-900/30",
+    label: "Presupuesto",
+  },
+  goal_contribution: {
+    icon: <PiggyBank className="w-5 h-5 text-orange-600" />,
+    bg: "bg-orange-100 dark:bg-orange-900/30",
+    label: "Aporte",
+  },
 };
 
 function NotificationItem({
@@ -84,13 +100,13 @@ function NotificationItem({
         "flex items-start gap-4 p-4 rounded-xl border transition-all",
         n.read
           ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 opacity-70"
-          : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:shadow-sm"
+          : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:shadow-sm",
       )}
     >
       <div
         className={cn(
           "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
-          config.bg
+          config.bg,
         )}
       >
         {config.icon}
@@ -141,13 +157,8 @@ function NotificationItem({
 
 export default function NotificationsPage() {
   const { profile: me } = useProfile();
-  const {
-    notifications,
-    unreadCount,
-    isLoading,
-    markAsRead,
-    markAllAsRead,
-  } = useNotifications(me?.id);
+  const { notifications, unreadCount, isLoading, markAsRead, markAllAsRead } =
+    useNotifications(me?.id);
 
   return (
     <div className="space-y-8">
@@ -200,7 +211,7 @@ export default function NotificationsPage() {
                 <div
                   className={cn(
                     "w-9 h-9 rounded-lg flex items-center justify-center",
-                    cfg.bg
+                    cfg.bg,
                   )}
                 >
                   {cfg.icon}

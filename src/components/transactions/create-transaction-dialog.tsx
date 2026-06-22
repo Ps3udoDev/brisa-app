@@ -1,9 +1,9 @@
 "use client";
 
+import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -12,17 +12,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Plus } from "lucide-react";
-import { useProfile } from "@/hooks/queries/use-profile";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useCreateTransaction } from "@/hooks/mutations/use-transactions";
+import { useProfile } from "@/hooks/queries/use-profile";
 
+// NOTA: flujos especializados que NO van por este diálogo genérico:
+//  - "Asignación de presupuesto" → AssignBudgetDialog (RPC assign_budget, par atómico).
+//  - "Aporte a meta" → ContributeGoalDialog (RPC contribute_to_goal, ligado a la meta).
 const transactionTypes = [
   { value: "income", label: "Ingreso" },
   { value: "expense", label: "Gasto" },
-  { value: "budget_assignment", label: "Asignación de presupuesto" },
   { value: "debt_payment", label: "Pago de deuda" },
-  { value: "goal_contribution", label: "Aporte a meta" },
 ];
 
 interface CreateTransactionDialogProps {
@@ -59,7 +60,7 @@ export function CreateTransactionDialog({
     }
 
     const amount = parseFloat(form.amount);
-    if (isNaN(amount) || amount <= 0) {
+    if (Number.isNaN(amount) || amount <= 0) {
       setError("El monto debe ser un número positivo");
       return;
     }
@@ -84,8 +85,10 @@ export function CreateTransactionDialog({
       });
       setOpen(false);
       onSuccess?.();
-    } catch (err: any) {
-      setError(err.message || "Error al crear la transacción");
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Error al crear la transacción",
+      );
     }
   }
 

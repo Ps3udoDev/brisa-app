@@ -49,8 +49,7 @@ export const KEYS = {
 
   // ── Budget Requests ──
   budgetRequests: {
-    detail: (id: string) =>
-      ["brisa", "budget_requests", "detail", id] as const,
+    detail: (id: string) => ["brisa", "budget_requests", "detail", id] as const,
     inbox: (toUserId: string) =>
       ["brisa", "budget_requests", "inbox", toUserId] as const,
     sent: (fromUserId: string) =>
@@ -87,6 +86,12 @@ export const KEYS = {
       ["brisa", "permissions", "byUser", userId] as const,
     check: (userId: string, perm: string) =>
       ["brisa", "permissions", "check", userId, perm] as const,
+  },
+
+  // ── Recurring rules ──
+  recurringRules: {
+    list: (userId: string) =>
+      ["brisa", "recurring_rules", "list", userId] as const,
   },
 
   // ── Notifications ──
